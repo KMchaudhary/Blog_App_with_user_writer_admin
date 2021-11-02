@@ -1,0 +1,58 @@
+POST http://localhost:3000/posts/new
+Content-Type: application/json
+
+{
+    "title": "Approved post",
+    "description": "Description on first post",
+    "body": "hey There!",
+    "creator_id": 9,
+    "approved": true
+}
+
+###
+
+GET http://localhost:3000/posts/
+
+###
+
+GET http://localhost:3000/posts/3
+
+
+###
+
+PATCH http://localhost:3000/posts/4
+Content-Type: application/json
+
+{
+    "title": "approved post",
+    "description": "Description on first post",
+    "body": "hey There!",
+    "creator_id": 9,
+    "approved": true
+}
+
+###
+
+DELETE http://localhost:3000/posts/3
+
+
+###
+
+# comments requrests
+POST http://localhost:3000/posts/4/comment
+Content-Type: application/json
+
+{
+    "message": "reply",
+    "post_id": 4,
+    "user_id": 9
+}
+
+
+###
+
+GET http://localhost:3000/posts/4/comment
+
+###
+
+GET http://localhost:3000/posts/7

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Blog</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+         .icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            border: none;
+            outline: none;
+        }
+        .popup-message {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            transition: 0.5s all ease-in-out;
+        }
+        .scale-0 {
+            transform: scale(0);
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-light py-2 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="left d-flex align-items-center">
+                <div class="logo fs-4 fw-bold">Logo <span class="fs-6 text-muted fw-normal">(<%= user.role %>)</span></div>
+            </div>
+            <div class="right d-flex align-items-center">
+                
+                <a class="btn btn-primary me-3" href="/home/my_posts">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
+                        <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
+                    </svg>
+                    <span>Home</span>
+                </a>               
+
+                <div class="dropdown">
+                    <button class="icon btn-secondary dropdown" role="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="0,10">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                        </svg>
+                    </button>
+                  
+                    <ul class="dropdown-menu" aria-labelledby="userMenu">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li><a class="dropdown-item" href="#">Another action</a></li>
+                      <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="py-4">
+            <div class="container">
+                <span class="border-bottom border-3 border-dark pb-1 fw-bold fs-5">Edit Blog</span>
+                <form class="mt-3" id="edit-form" action="/posts/<%= post.post_id %>/edit" method="post">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" value="<%= post.title %>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description"><%= post.description %></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="body" class="form-label">Content</label>
+                        <textarea class="form-control" style="min-height: 300px;" id="body" name="body"><%= post.body %></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <input id="save-btn" type="submit" class="btn btn-primary" value="Save changes">
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <div class="popup-message py-2 px-3 bg-success text-white rounded shadow d-none" id="update-message">
+        <span>👍 Post updated successfully.</span>
+    </div>
+
+    <footer>
+        <div class="container">Footer</div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+        const form = document.getElementById('edit-form');
+        const saveBtn = document.getElementById('save-btn');
+
+        saveBtn.addEventListener('click', sendFormData);
+
+        function sendFormData(e) {
+            e.preventDefault();
+            
+            const title = form['title'].value.trim()
+            if(title == '') title = 'untitled';
+            const description = form['description'].value.trim()
+            const body = form['body'].value.trim()
+
+            const data = {
+                title,
+                description,
+                body
+            }
+            
+            fetch(form.action, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log("Success: ", result);
+                let popup = document.getElementById('update-message');
+                popup.classList.remove('d-none');
+                popup.classList.remove('scale-0');
+                setTimeout(() => {
+                    popup.classList.add('d-none');
+                    popup.classList.add('scale-0');
+                }, 2000);
+            })
+        }
+    </script>
+
+</body>
+</html>

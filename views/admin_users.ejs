@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | all users</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style> 
+        .link-item {
+            color: initial;
+            border-bottom: 3px solid transparent;
+        }
+        .link-item:hover {
+            color: #0d6efd;
+            border-bottom: 3px solid #0d6efd;
+        }
+        .active {
+            color: #0d6efd;
+            border-bottom: 3px solid #0d6efd;
+        }
+        .icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            border: none;
+            outline: none;
+        }
+        .popup-message {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            transition: 0.5s all ease-in-out;
+        }
+        .scale-0 {
+            transform: scale(0);
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('admin_header') %>
+
+    <main class="bg-light">
+        <%- include('admin_options', {page: page}) %>
+
+        <section class="py-5">
+        <div class="container">
+            <span class="border-bottom border-3 border-dark pb-1 fw-bold fs-5">All users</span>
+            <div class="row mt-3">
+                <div class="col col-sm-8 col-md-6">
+                    <ol class="list-group list-group-numbered w-100">
+                        <% if(typeof(users) != 'undefined') { %>
+                        <% users.forEach(usr => { %>
+                            <li class="list-group-item d-flex justify-content-between align-items-start user-info" data-user_id="<%= usr.user_id %>" data-user_name="<%= usr.name %>" data-user_role="<%= usr.role %>">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold"><%= usr.name %> | <span class="fw-normal text-muted"><%= usr.email %></span> | <span class="fw-normal role-text text-muter"><%= usr.role %></span></div>
+                                <%= usr.intro %>
+                            </div>
+                            <div class="dropdown">
+                                <button class=icon btn-light dropdown" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                    </svg>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="#">view profile</a></li>
+                                    <li>
+                                        <button type="button" class="dropdown-item change-role-btn" data-bs-toggle="modal" data-bs-target="#changeRoleModel">Change role</button>
+                                    </li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                            </li>
+                        <% }) %>
+                        <% } %>
+                    </ol>
+                </div>
+            </div>
+            
+        </div>
+        </section>
+
+    </main>
+
+    <!-- Model to change role -->
+    <div class="modal fade" id="changeRoleModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Change role<br><span class="text-muted fw-normal user-detail"></span></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateRoleForm" action="http://localhost:3000/admin/users/update">
+                    <div class="mb-3">
+                        <label class="form-label">Select role</label> <br>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="role" id="user" value="user" required>
+                          <label class="form-check-label" for="user">User</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="role" id="writer" value="writer" required>
+                          <label class="form-check-label" for="writer">Writer</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="role" id="admin" value="admin" required>
+                            <label class="form-check-label" for="admin">Admin</label>
+                          </div>
+                    </div>
+                </form>                
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button id="update-user-role-btn" type="button" data-bs-dismiss="modal" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- popup message -->
+    <div class="popup-message py-2 px-3 bg-warning rounded shadow d-none" id="update-message">
+        <span class="fw-blod">👍 Role updated successfully</span>
+    </div>
+
+    <footer>
+        <div class="container">Footer</div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+        const model = document.getElementById('changeRoleModel');
+        const updateUserRoleBtn = document.getElementById('update-user-role-btn');
+        let user = undefined;
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            if(target.classList.contains('change-role-btn')) {
+                // display user data in model
+                const el = target.closest('.user-info');
+                user = el;
+                const id = el.dataset.user_id;
+                const name = el.dataset.user_name;
+                const role = el.dataset.user_role;
+                model.querySelector('.modal-body').dataset.user_id = id;
+                model.querySelector('.user-detail').innerText = name + ' | ' + role;
+                const query = `input#${role}`;
+                model.querySelector(query).checked = true;
+            }
+        })
+
+        function updateUserRole(e) {
+            const user_id = model.querySelector('.modal-body').dataset.user_id;
+            const form = document.getElementById('updateRoleForm');
+            const newRole= form['role'].value;
+
+            const data = {
+                user_id: user_id,
+                role: newRole
+            }
+          
+            console.log('now fetch');
+
+            fetch(form.action, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                return response.json()
+            })
+            .then(result => {
+                console.log("Success: ", result);
+                user.dataset.user_role = newRole;
+                user.querySelector('.role-text').innerText = newRole;
+                let popup = document.getElementById('update-message');
+                popup.querySelector('span').innerText = '👍 ' + user.dataset.user_name + ' is now ' + newRole;
+                popup.classList.remove('d-none');
+                popup.classList.remove('scale-0');
+                setTimeout(() => {
+                    popup.classList.add('d-none');
+                    popup.classList.add('scale-0');
+                }, 2000);
+            })
+        }
+
+        updateUserRoleBtn.addEventListener('click', updateUserRole);
+
+    
+    </script>
+
+</body>
+</html>

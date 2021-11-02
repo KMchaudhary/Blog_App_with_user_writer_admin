@@ -1,0 +1,11 @@
+
+
+<section id="admin-options">
+    <div class="container">
+        <div class="d-flex border bg-white">
+            <a class="p-2 me-2 text-decoration-none link-item <%= page.title == 'posts' ? 'active' : '' %>" href="/admin">Posts</a>
+            <a class="p-2 me-2 text-decoration-none link-item <%= page.title == 'pending_posts' ? 'active' : '' %>" href="/admin/pending_posts">Pending posts</a>
+            <a class="p-2 me-2 text-decoration-none link-item <%= page.title == 'users' ? 'active' : '' %>" href="/admin/users">End users</a>
+        </div>
+    </div>
+</section>

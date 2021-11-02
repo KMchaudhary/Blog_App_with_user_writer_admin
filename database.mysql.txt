@@ -1,0 +1,42 @@
+/* Database creation create tables */
+
+CREATE TABLE User (
+    user_id MEDIUMINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(20) NOT NULL,
+    email VARCHAR(30) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    role ENUM('user','writer','admin')
+);
+
+CREATE TABLE Post(
+    post_id MEDIUMINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(50) NOT NULL DEFAULT 'Untitled',
+    body TEXT,
+    description VARCHAR(300),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    creator_id MEDIUMINT NOT NULL,
+    posted_at DATETIME,
+    published_at DATETIME,
+    approved BOOLEAN DEFAULT 0,
+    FOREIGN KEY (creator_id)
+        REFERENCES User(user_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Comment(
+    comment_id MEDIUMINT PRIMARY KEY AUTO_INCREMENT,
+    message VARCHAR(500) NOT NULL,
+    post_id MEDIUMINT NOT NULL,
+    user_id MEDIUMINT NOT NULL,
+    reply_to_comment MEDIUMINT,
+    FOREIGN KEY (post_id)
+        REFERENCES Post(post_id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (user_id)
+        REFERENCES User(user_id),
+    FOREIGN KEY (reply_to_comment)
+        REFERENCES Comment(comment_id)
+        ON DELETE CASCADE
+);
+
